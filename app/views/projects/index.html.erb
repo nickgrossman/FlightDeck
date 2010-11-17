@@ -1,0 +1,38 @@
+<p id="notice" style="display:none"><%= notice %></p>
+
+<div id="update_status">
+  <%= form_for(:update, :url => :updates) do |f| %>
+    <%= f.collection_select :project_id, @projects, :id, :full_name, {:prompt => '-- project --'} %>
+    <% moods = ['happy', 'unsure', 'sad'] %>
+    <%= f.collection_select :mood, moods, :downcase, :capitalize, {:prompt => '-- mood --'} %>
+    <%= f.text_field :text %>
+    <% # f.hidden_field :update, :author, {:value => 'nick'} %>
+    <%= f.submit 'Update Status' %>
+  <% end %>
+</div><!-- /status update -->
+
+<table>
+<thead>
+  <tr>
+    <th class="project"><%= make_sign("Project") %></th>
+    <th class="status"><%= make_sign("Status") %></th>
+    <th class="update"><%= make_sign("Latest") %></th>
+  </tr>
+</thead>
+<tbody>
+<% @projects.each do |project| %>
+  <% update = project.updates.find(:last) %>
+  <tr class="project">
+    <td class="name">
+      <%= link_to project.name, project_path(project) %>
+      <span class="client"><%= link_to project.client, project_path(project) %></span>
+    </td>
+    <td class="status <%= project.status %>"><%= project.status %></td>
+    <td class="update <%= update.mood if update %>"><%= update.text if update %></td>
+  </tr>
+<% end %>
+</tbody>
+</table>
+
+
+<%= link_to 'New Project', new_project_path %>
